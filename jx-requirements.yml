@@ -1,35 +1,94 @@
+autoUpdate:
+  enabled: false
+  schedule: ""
+bootConfigURL: https://github.com/jenkins-x/jenkins-x-boot-config
 cluster:
-  clusterName: ""
-  environmentGitOwner: ""
-  environmentGitPublic: false
-  project: ""
-  provider: gke
-  zone: ""
-gitops: true
+  clusterName: cerberus
+  devEnvApprovers:
+  - marsdalesa
+  environmentGitOwner: Simfy-Operations
+  gitKind: github
+  gitName: github
+  gitServer: https://github.com
+  namespace: jx
+  provider: eks
+  region: eu-west-1
+  registry: 222454815080.dkr.ecr.eu-west-1.amazonaws.com
 environments:
-- key: dev
-- key: staging
-- key: production
+- ingress:
+    domain: dev.renovations.wtf
+    externalDNS: true
+    ignoreLoadBalancer: true
+    namespaceSubDomain: .
+    tls:
+      email: systems@simfy.africa
+      enabled: true
+      production: true
+  key: dev
+  repository: environment-cerberus-dev
+- ingress:
+    domain: staging.renovations.wtf
+    externalDNS: true
+    ignoreLoadBalancer: true
+    namespaceSubDomain: .
+    tls:
+      email: systems@simfy.africa
+      enabled: true
+      production: true
+  key: staging
+  repository: environment-cerberus-staging
+- ingress:
+    domain: renovations.wtf
+    externalDNS: true
+    ignoreLoadBalancer: true
+    namespaceSubDomain: .
+    tls:
+      email: systems@simfy.africa
+      enabled: true
+      production: true
+  key: production
+  repository: environment-cerberus-production
+gitops: true
 ingress:
-  domain: ""
-  externalDNS: false
+  domain: renovations.wtf
+  externalDNS: true
+  ignoreLoadBalancer: true
+  namespaceSubDomain: -jx.
   tls:
-    email: ""
-    enabled: false
-    production: false
+    email: systems@simfy.africa
+    enabled: true
+    production: true
 kaniko: true
-secretStorage: local
+repository: nexus
+secretStorage: vault
 storage:
+  backup:
+    enabled: true
+    url: s3://cerberus-simfy-backups
   logs:
-    enabled: false
-    url: ""
+    enabled: true
+    url: s3://cerberus-simfy-logs
   reports:
-    enabled: false
-    url: ""
+    enabled: true
+    url: s3://cerberus-simfy-reports
   repository:
-    enabled: false
-    url: ""
+    enabled: true
+    url: s3://cerberus-simfy-repository
+terraform: true
+vault:
+  aws:
+    autoCreate: false
+    iamUserName: vault_user
+    dynamoDBTable: cerberus-vault
+    dynamoDBRegion: eu-west-1
+    kmsKeyId: 7926344f-825c-461c-95fb-b47bc94902a1
+    kmsRegion: eu-west-1
+    s3Bucket: cerberus-vault
+    s3Region: eu-west-1
+velero:
+  schedule: ""
+  ttl: ""
 versionStream:
-  ref: "master"
+  ref:  1.0.529
   url: https://github.com/jenkins-x/jenkins-x-versions.git
 webhook: lighthouse
